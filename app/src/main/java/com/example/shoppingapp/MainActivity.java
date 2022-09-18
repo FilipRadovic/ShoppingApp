@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -16,7 +18,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PostsAdapter.OnItemClickListener {
+
+    public static final String EXTRA_URL = "imageUrl";
+    public static final String EXTRA_BRAND = "brandName";
+    public static final String EXTRA_NAME = "productName";
+    public static final String EXTRA_PRICE = "price";
+
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
@@ -36,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PostsAdapter(postsList,MainActivity.this);
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(MainActivity.this);
+
 
         fetchPosts();
     }
@@ -60,4 +70,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+        Posts clickedItem = postsList.get(position);
+
+        detailIntent.putExtra(EXTRA_URL, clickedItem.getImage_link());
+        detailIntent.putExtra(EXTRA_BRAND, clickedItem.getBrand());
+        detailIntent.putExtra(EXTRA_NAME, clickedItem.getName());
+        detailIntent.putExtra(EXTRA_PRICE, clickedItem.getPrice());
+
+        startActivity(detailIntent);
+    }
 }
